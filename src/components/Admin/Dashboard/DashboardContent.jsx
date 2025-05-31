@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { db } from "../../../firebase";
+import { db, storage } from "../../../firebase";
 import {
   doc,
   setDoc,
@@ -8,7 +8,7 @@ import {
   collection,
   getDocs
 } from "firebase/firestore";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PostEditor from "./PostEditor";
 import PostList from "./PostList";
 import UserList from "./UserList";
@@ -17,6 +17,7 @@ function DashboardContent({ view }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
+  const [coverImage, setCoverImage] = useState(null);
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -38,28 +39,42 @@ function DashboardContent({ view }) {
     setUsers(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newPost = {
-      title,
-      content,
-      summary,
-      timestamp: serverTimestamp(),
-      likes: 0,
-    };
-    const id = editingId || Date.now().toString();
-    await setDoc(doc(db, "posts", id), newPost);
-    setTitle("");
-    setContent("");
-    setSummary("");
-    setEditingId(null);
-    loadPosts();
+  const handleSubmit = async (postData) => {
+    console.log("Enviando post:", postData);
+    try {
+      let coverImageUrl = postData.coverImageUrl;
+
+      if (postData.coverImageFile) {
+        const imageRef = ref(storage, `coverImages/${Date.now()}_${postData.coverImageFile.name}`);
+        await uploadBytes(imageRef, postData.coverImageFile);
+        coverImageUrl = await getDownloadURL(imageRef);
+      }
+
+      const id = editingId || Date.now().toString();
+      await setDoc(doc(db, "posts", id), {
+        title: postData.title,
+        content: postData.content,
+        summary: postData.summary,
+        coverImageUrl,
+        timestamp: serverTimestamp(),
+      });
+
+      setTitle("");
+      setContent("");
+      setSummary("");
+      setCoverImage(null);
+      setEditingId(null);
+      loadPosts();
+    } catch (error) {
+      console.error("Error al guardar el post:", error);
+    }
   };
 
   const handleEdit = (post) => {
     setTitle(post.title);
     setSummary(post.summary);
     setContent(post.content);
+    setCoverImage(post.coverImageUrl);
     setEditingId(post.id);
   };
 
@@ -67,6 +82,7 @@ function DashboardContent({ view }) {
     setTitle("");
     setSummary("");
     setContent("");
+    setCoverImage(null);
     setEditingId(null);
   };
 
@@ -86,6 +102,8 @@ function DashboardContent({ view }) {
         setSummary={setSummary}
         content={content}
         setContent={setContent}
+        coverImage={coverImage}
+        setCoverImage={setCoverImage}
         editingId={editingId}
         handleSubmit={handleSubmit}
         handleCancelEdit={handleCancelEdit}
