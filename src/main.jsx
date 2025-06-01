@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
-import Blog from "./pages/Blog";
+import Blog from "./Pages/Blog";
 import './index.css';
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
