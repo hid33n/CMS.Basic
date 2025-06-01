@@ -51,7 +51,7 @@ export function Header({ scrollTo, refs, darkMode, setDarkMode }) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <FaRocket className="text-indigo-500 text-xl" />
-          <h1 className="text-2xl font-bold tracking-tight">Hid33n Studios</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Hid33n Studio</h1>
         </div>
         <nav className="flex items-center space-x-4 relative">
           <button onClick={() => scrollTo(refs.homeRef)} className="hover:text-indigo-500">Inicio</button>
