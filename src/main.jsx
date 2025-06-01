@@ -7,6 +7,8 @@ import './index.css';
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
 import AdminPanel from './components/Admin/AdminPanel';
+import PostDetail from "./components/Blog/PostDetail";
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
