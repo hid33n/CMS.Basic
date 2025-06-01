@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { db, storage, … } from "../../firebase";
+import { db, storage, } from "../../firebase";
 
 function PostDetail() {
   const { id } = useParams();
